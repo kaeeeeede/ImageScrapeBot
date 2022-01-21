@@ -1,52 +1,37 @@
+import lightbulb
 import os
-import discord
-import image_scraper
 
-from discord.ext import commands
-from discord_slash import SlashCommand, SlashContext
-from discord_slash.utils.manage_commands import create_option
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
 
-bot = commands.Bot(command_prefix = "!", activity = discord.Activity(type = discord.ActivityType.watching, name = 'the chat'))
-slash = SlashCommand(bot, sync_commands = True)
+bot = lightbulb.BotApp(token = os.getenv('DISCORD_TOKEN'))
 
-@slash.slash(
-	name = "imageURL",
-	description = "Takes a URL",
-	options = [
-		create_option(
-			name = "address",
-			description = "Takes a URL",
-			required = True,
-			option_type = 3,
-		)
-	]
-)
+test_guild_ids = [int(server_id) for server_id in os.getenv('TEST_SERVER_IDS').split(",")]
 
-async def imageURL(ctx:SlashCommand, address):
-	htmldata = image_scraper.getdata(address)
-	page = image_scraper.BeautifulSoup(htmldata, 'html.parser')
+total_media_size_limit = 100
+
+@bot.command
+@lightbulb.option("url", "URL to scrape images from")
+@lightbulb.command("scrape-images", "Scrapes all images from any given website", guilds = test_guild_ids, ephemeral = True, auto_defer = True)
+@lightbulb.implements(lightbulb.SlashCommand)
+async def scrapeImages(ctx):
 	
-	imageCount = 0
-
-	for item in page.find_all('img'):
-		imageCount += 1
-	
-	if (imageCount > 10):
-		await ctx.send("The bot can only send up to 10 images.")
-
-	elif (imageCount == 0):
-		await ctx.send("There are no images in this website.")
-
+	if guild := ctx.get_guild():
+		server_boosts = guild.premium_subscription_count
 	else:
-		for item in page.find_all('img'):
-			await ctx.send(item['src'])
+		server_boosts = 0
 
-@bot.event
-async def on_ready():
-	print("Ready!")	
+	await ctx.respond("Pong!")
 
-bot.run(TOKEN)
+bot.run()
+
+def get_file_size_limit_by_boosts(boost_count):
+	if 0 <= boost_count < 7:
+		size_limit = 8
+	elif 7 <= boost_count < 14:
+		size_limit = 50
+	elif 14 <= boost_count:
+		size_limit = 100
+
+	return size_limit
