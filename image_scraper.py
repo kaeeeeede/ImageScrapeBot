@@ -38,3 +38,7 @@ def download_images(images, folder_name):
                 img.append(f"{folder_name}/images{i+1}.jpg")
 
     return(img)
+
+if __name__ == "__main__":
+    address = input("Address:- ")
+    getData(address)
