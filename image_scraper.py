@@ -3,6 +3,7 @@ import requests
 import os
 
 folder_name = "Downloads"
+img = []
 
 def create_folder(images):
     try:
@@ -14,31 +15,30 @@ def create_folder(images):
 def download_images(images, folder_name):
     if len(images) != 0:
         for i, image in enumerate(images):
-            try:
+            if image.get("data-srcset") != None:
                 image_link = image["data-srcset"]
-            except:
-                try:
-                    image_link = image["data-src"]
-                except:
-                    try:
-                        image_link = image["data-fallback-src"]
-                    except:
-                        try:
-                            image_link = image["src"]
-                        except:
-                            pass
-            try:
-                r = requests.get(image_link).content
-                try:
-                    r = str(r, 'utf-8')
-                except UnicodeDecodeError:
-                    with open(f"{folder_name}/images{i+1}.jpg", "wb+") as f:
-                        f.write(r)
-            except:
-                pass
+            elif image.get("data-src") != None:
+                image_link = image["data-src"]
+            elif image.get("data-fallback-src") != None:
+                image_link = image["data-fallback-src"]
+            elif image.get("src") != None:
+                image_link = image["src"]
+            else:
+                continue
+
+            r = requests.get(image_link).content
+            with open(f"{folder_name}/images{i+1}.jpg", "wb+") as f:
+                f.write(r)
+                img.append(f"{folder_name}/images{i+1}.jpg")
+
+    return(img)
 
 def getData(url):
     r = requests.get(url)
     soup = BeautifulSoup(r.text, 'html.parser')
     images = soup.findAll('img')
     create_folder(images)
+
+url = input("Enter:- ")
+
+getData(url)
