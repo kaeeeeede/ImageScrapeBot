@@ -5,6 +5,12 @@ import os
 folder_name = "Downloads"
 img = []
 
+def getData(url):
+    r = requests.get(url)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    images = soup.findAll('img')
+    create_folder(images)
+
 def create_folder(images):
     try:
         os.mkdir(folder_name)
@@ -32,13 +38,3 @@ def download_images(images, folder_name):
                 img.append(f"{folder_name}/images{i+1}.jpg")
 
     return(img)
-
-def getData(url):
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    images = soup.findAll('img')
-    create_folder(images)
-
-url = input("Enter:- ")
-
-getData(url)
