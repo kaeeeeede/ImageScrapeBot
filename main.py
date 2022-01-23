@@ -9,8 +9,6 @@ load_dotenv()
 
 bot = lightbulb.BotApp(token = os.getenv('DISCORD_TOKEN'))
 
-test_guild_ids = [int(server_id) for server_id in os.getenv('TEST_SERVER_IDS').split(",")]
-
 total_message_size_limit = 100
 file_count_limit = 10	
 
