@@ -39,7 +39,7 @@ async def scrapeImages(ctx):
 
 	aggregated_files_to_send = []
 
-	for image_path in image_scraper.download_images(ctx.options.url):
+	for image_path in image_scraper.download_images(ctx.options.url, total_size_limit = int(os.getenv('DISK_LIMIT_MB'))):
 		if (file_size := get_filesize_mb(image_path)) > file_size_limit:
 			too_large_files.append(file_size)
 			continue

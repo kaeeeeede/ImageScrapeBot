@@ -32,7 +32,7 @@ def get_default_path():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.join(base_dir, "Downloads")
 
-def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf, folder_name = get_default_path(), cleanup_before_downloading = True):
+def download_images(url, total_size_limit = math.inf, file_count_limit = math.inf, folder_name = get_default_path(), cleanup_before_downloading = True):
     total_file_size = 0
     total_file_number = 0
 
@@ -52,7 +52,7 @@ def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf
             total_file_size += utils.get_filesize_mb(f"{folder_name}/images{i+1}.jpg")    
             total_file_number += 1
         
-        if total_file_number >= file_count_limit or total_file_size >= file_size_limit:
+        if total_file_number >= file_count_limit or total_file_size >= total_size_limit:
             break
         
         yield (f"{folder_name}/images{i+1}.jpg")
