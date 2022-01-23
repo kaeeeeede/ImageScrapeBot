@@ -3,7 +3,6 @@ import requests
 import os
 
 folder_name = "Downloads"
-img = []
 
 def getData(url):
     r = requests.get(url)
@@ -24,31 +23,25 @@ def download_images(images, folder_name, file_size_limit, file_count_limit):
     total_file_size = 0
     total_file_number = 0
 
-    while total_file_size < file_size_limit and total_file_number < file_count_limit:
-        for i, image in enumerate(images):
-            if image.get("data-srcset") != None:
-                image_link = image["data-srcset"]
-            elif image.get("data-src") != None:
-                image_link = image["data-src"]
-            elif image.get("data-fallback-src") != None:
-                image_link = image["data-fallback-src"]
-            elif image.get("src") != None:
-                image_link = image["src"]
-            else:
-                continue
-
-            r = requests.get(image_link).content
+    for i, image in enumerate(images):
+        if link := image.get("data-srcset") or image.get("data-src") or image.get("data-fallback-src") or image.get("src"):
+            r = requests.get(link).content
             with open(f"{folder_name}/images{i+1}.jpg", "wb+") as f:
                 f.write(r)
-                total_file_size += os.path.getsize(f"{folder_name}/images{i+1}.jpg")
+                total_file_size += os.path.getsize(f"{folder_name}/images{i+1}.jpg")    
                 total_file_number += 1
-                if total_file_size < file_size_limit and total_file_number < file_count_limit:
-                    img.append(f"{folder_name}/images{i+1}.jpg")
-                else:
-                    break
-
-    return img
-
+            if total_file_number < file_count_limit and total_file_size < file_size_limit:
+                yield (f"{folder_name}/images{i+1}.jpg")
+            else:
+                break
+        else:
+            continue
+        
 if __name__ == "__main__":
     address = input("Address:- ")
-    getData(address)
+    file_size_limit = input("Size Limit:- ")
+    file_count_limit = input("File Limit:- ")
+    images = getData(address)
+    folder_name = create_folder(images)
+    list(download_images(images, folder_name, file_size_limit, file_count_limit))
+
