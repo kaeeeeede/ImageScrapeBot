@@ -3,6 +3,7 @@ import requests
 import os
 import utils
 import shutil
+import math
 
 def getData(url):
     r = requests.get(url)
@@ -27,7 +28,7 @@ def get_image_link_from_tag(tag):
 def cleanup(folder_name):
     shutil.rmtree(folder_name, ignore_errors = True)
 
-def download_images(url, file_size_limit, file_count_limit, folder_name = "Downloads", cleanup_before_downloading = True):
+def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf, folder_name = "Downloads", cleanup_before_downloading = True):
     total_file_size = 0
     total_file_number = 0
 
@@ -47,7 +48,7 @@ def download_images(url, file_size_limit, file_count_limit, folder_name = "Downl
             total_file_size += utils.get_filesize_mb(f"{folder_name}/images{i+1}.jpg")    
             total_file_number += 1
         
-        if not total_file_number > file_count_limit and total_file_size > file_size_limit:
+        if total_file_number >= file_count_limit or total_file_size >= file_size_limit:
             break
         
         yield (f"{folder_name}/images{i+1}.jpg")
