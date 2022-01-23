@@ -28,7 +28,13 @@ def get_image_link_from_tag(tag):
 def cleanup(folder_name):
     shutil.rmtree(folder_name, ignore_errors = True)
 
-def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf, folder_name = "Downloads", cleanup_before_downloading = True):
+def get_default_path():
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    folder_name = os.path.join(base_dir, "Downloads")
+
+    return folder_name
+
+def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf, folder_name = get_default_path(), cleanup_before_downloading = True):
     total_file_size = 0
     total_file_number = 0
 
