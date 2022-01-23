@@ -30,9 +30,7 @@ def cleanup(folder_name):
 
 def get_default_path():
     base_dir = os.path.dirname(os.path.abspath(__file__))
-    folder_name = os.path.join(base_dir, "Downloads")
-
-    return folder_name
+    return os.path.join(base_dir, "Downloads")
 
 def download_images(url, file_size_limit = math.inf, file_count_limit = math.inf, folder_name = get_default_path(), cleanup_before_downloading = True):
     total_file_size = 0
