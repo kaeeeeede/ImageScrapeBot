@@ -40,13 +40,22 @@ def download_images(url, total_size_limit = math.inf, file_count_limit = math.in
         cleanup(folder_name)
 
     images = getData(url)
+    
     create_folder(folder_name)
 
     for i, image in enumerate(images):
         if not get_image_link_from_tag(image):
             continue
         link = get_image_link_from_tag(image)
+
+        #kpopping hack
+        if "kpopping.com" in url:
+            link = "https://kpopping.com" + link
+
+        print(f"image {i} : {link}")
+
         r = requests.get(link).content
+
         with open(f"{folder_name}/images{i+1}.jpg", "wb+") as f:
             f.write(r)
             total_file_size += utils.get_filesize_mb(f"{folder_name}/images{i+1}.jpg")    
