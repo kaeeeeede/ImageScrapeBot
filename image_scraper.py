@@ -56,7 +56,7 @@ def download_images(url, total_size_limit = math.inf, file_count_limit = math.in
 
         try:
             r = requests.get(link).content
-        catch requests.exceptions.InvalidSchema:
+        except requests.exceptions.InvalidSchema:
             print(f"Failed with InvalidSchema!")
             continue
 
