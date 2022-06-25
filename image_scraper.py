@@ -54,7 +54,11 @@ def download_images(url, total_size_limit = math.inf, file_count_limit = math.in
 
         print(f"image {i} : {link}")
 
-        r = requests.get(link).content
+        try:
+            r = requests.get(link).content
+        catch requests.exceptions.InvalidSchema:
+            print(f"Failed with InvalidSchema!")
+            continue
 
         with open(f"{folder_name}/images{i+1}.jpg", "wb+") as f:
             f.write(r)
